@@ -1,3 +1,4 @@
+//const { login } = require('../controllers/security');
 // routes.js
 const express = require('express');
 const router = express.Router();
@@ -5,10 +6,8 @@ const jwt = require('jsonwebtoken');
 const { login } = require('../controllers/security');
 const { checkAdmin } = require('../configurations/accessControl'); // Usar checkAdmin desde accessControl
 
-// Importar el controlador de usuarios desde controllers
 const usuariosController = require('../controllers/usuarios');
 
-// Middleware de verificación de token (verifier.js)
 const verifier = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
    
@@ -19,9 +18,9 @@ const verifier = (req, res, next) => {
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Añadimos los datos del usuario decodificados en la request
+        req.user = decoded; 
         console.log('Usuario decodificado:', req.user);
-        next(); // Continuamos con la siguiente función o middleware
+        next(); 
     } catch (error) {
         console.log('Error en la verificación del token:', error);
         return res.status(403).json({ error: 'Token no válido' });
@@ -33,15 +32,15 @@ router.post('/login', login);
 
 // Rutas para usuarios (registrar, actualizar, eliminar)
 console.log('Configurando rutas de usuario...');
-router.get('/usuarios', verifier, checkAdmin, usuariosController.getAllUsers);  // Usar checkAdmin
+router.get('/usuarios', verifier, checkAdmin, usuariosController.getAllUsers);  
 console.log('Ruta para obtener todos los usuarios configurada');
-router.get('/usuarios/:id', verifier, checkAdmin, usuariosController.getUserById);  // Usar checkAdmin
+router.get('/usuarios/:id', verifier, checkAdmin, usuariosController.getUserById);  
 console.log('Ruta para obtener usuario por ID configurada');
-router.post('/usuarios', verifier, checkAdmin, usuariosController.createUser);  // Usar checkAdmin
+router.post('/usuarios', verifier, checkAdmin, usuariosController.createUser);  
 console.log('Ruta para crear usuario configurada');
-router.put('/usuarios/:id', verifier, checkAdmin, usuariosController.updateUser);  // Usar checkAdmin
+router.put('/usuarios/:id', verifier, checkAdmin, usuariosController.updateUser);  
 console.log('Ruta para actualizar usuario configurada');
-router.delete('/usuarios/:id', verifier, checkAdmin, usuariosController.deleteUser);  // Usar checkAdmin
+router.delete('/usuarios/:id', verifier, checkAdmin, usuariosController.deleteUser);  
 console.log('Ruta para eliminar usuario configurada');
 
 module.exports = router;

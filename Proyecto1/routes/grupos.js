@@ -34,7 +34,7 @@ router.get('/tecnico/:id_tecnico', verifyToken, async (req, res) => {
     try {
         const { id_tecnico } = req.params;
 
-        // Obtener el ID del grupo al que pertenece el técnico
+        // Obtner el ID del grupo al que pertenece el tecnico
         const { data: grupo_tecnico, error: errorGT } = await supabase
             .from('grupo_tecnico')
             .select('id_grupo')
@@ -45,7 +45,7 @@ router.get('/tecnico/:id_tecnico', verifyToken, async (req, res) => {
             return res.status(404).json({ error: 'El técnico no pertenece a ningún grupo' });
         }
 
-        // Obtener la información del grupo
+        // Obtener la informacion del grupo
         const { data: grupo, error: errorG } = await supabase
             .from('grupo')
             .select('*')
@@ -55,7 +55,8 @@ router.get('/tecnico/:id_tecnico', verifyToken, async (req, res) => {
         if (errorG || !grupo) {
             return res.status(404).json({ error: 'Grupo no encontrado' });
         }
-
+///////////////////////////////////////////////////////////7
+///
         // Obtener el nombre del supervisor
         const { data: supervisor, error: errorS } = await supabase
             .from('usuario')
@@ -67,7 +68,6 @@ router.get('/tecnico/:id_tecnico', verifyToken, async (req, res) => {
             return res.status(404).json({ error: 'Supervisor no encontrado' });
         }
 
-        // Enviar la respuesta con los detalles del grupo y supervisor
         const resultado = {
             id_grupo: grupo.id,
             nombre_grupo: grupo.nombre,
@@ -131,9 +131,9 @@ router.post('/:id_grupo/asignar-tecnico', verifyToken, async (req, res) => {
         .select('*')
         .eq('id_grupo', id_grupo)
         .eq('id_tecnico', id_tecnico)
-        .maybeSingle(); // ← Cambia .single() por .maybeSingle()
+        .maybeSingle(); 
     
-    if (existe) { // Si ya existe, devuelve error
+    if (existe) { 
         return res.status(400).json({ error: 'El técnico ya está asignado a este grupo' });
     }
 
@@ -186,11 +186,11 @@ router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
 
 
 router.post('/:id/asignar-tecnico', async (req, res) => {
-    const { id } = req.params; // ID del grupo
-    const { id_tecnico } = req.body; // ID del técnico
+    const { id } = req.params; 
+    const { id_tecnico } = req.body; 
 
     try {
-        // Verificar si ya existe la relación antes de insertarla
+        
         const { data: existente, error: errorExistente } = await supabase
             .from('grupo_tecnico')
             .select('*')
@@ -203,7 +203,7 @@ router.post('/:id/asignar-tecnico', async (req, res) => {
             return res.status(400).json({ message: 'El técnico ya está asignado a este grupo' });
         }
 
-        // Insertar el nuevo técnico en el grupo
+        
         const { error } = await supabase
             .from('grupo_tecnico')
             .insert([{ id_grupo: id, id_tecnico }]);
@@ -212,20 +212,20 @@ router.post('/:id/asignar-tecnico', async (req, res) => {
 
         res.json({ message: 'Técnico asignado correctamente' });
     } catch (error) {
-        console.error('❌ Error en POST /grupos/:id/asignar-tecnico:', error);
+        console.error('Error en POST /grupos/:id/asignar-tecnico:', error);
         res.status(500).json({ error: 'Error interno del servidor', details: error.message });
     }
 });
 
 
 ///////////////////Tecnicos sin grupo
-// Backend - Obtener técnicos disponibles para un grupo específico
+// Obtener técnicos disponibles para un grupo específico
 router.get('/:id/tecnicos-disponibles', verifyToken, async (req, res) => {
     const grupoId = req.params.id;
     console.log('Grupo ID recibido en el backend:', grupoId);
 
     try {
-        // Paso 1: Obtener los IDs de los técnicos asignados al grupo
+        
         const { data: grupoTecnicos, error: grupoError } = await supabase
             .from('grupo_tecnico')
             .select('id_tecnico')
@@ -236,28 +236,27 @@ router.get('/:id/tecnicos-disponibles', verifyToken, async (req, res) => {
             return res.status(500).json({ error: 'Error al obtener técnicos del grupo', details: grupoError.message });
         }
 
-        // Paso 2: Extraer solo los IDs de los técnicos asignados (debe ser un array de números)
+      
         const idsTecnicosAsignados = grupoTecnicos.map(tecnico => tecnico.id_tecnico);
         console.log('IDs de técnicos asignados:', idsTecnicosAsignados);
 
-        // Paso 3: Obtener todos los técnicos con rol "Técnico"
+        
         const { data: todosTecnicos, error: todosError } = await supabase
             .from('usuario')
             .select('*')
-            .eq('rol', 'Técnico'); // Solo técnicos
+            .eq('rol', 'Técnico'); 
 
         if (todosError) {
             console.log('Error al obtener todos los técnicos:', todosError);
             return res.status(500).json({ error: 'Error al obtener todos los técnicos', details: todosError.message });
         }
 
-        // Paso 4: Filtrar los técnicos no asignados (filtrar manualmente en el backend)
         const tecnicosDisponibles = todosTecnicos.filter(tecnico => 
             !idsTecnicosAsignados.includes(tecnico.id));
 
         console.log('Técnicos disponibles:', tecnicosDisponibles);
 
-        // Paso 5: Responder con los técnicos disponibles
+    
         return res.json(tecnicosDisponibles);
 
     } catch (error) {
@@ -279,7 +278,7 @@ router.get('/:id/tecnicos-disponibles', verifyToken, async (req, res) => {
 //////////////////////////////////////////////////
 // Obtener los técnicos asignados a un supervisor
 router.get('/supervisor/:id_supervisor/tecnicos', verifyToken, async (req, res) => {
-    const { id_supervisor } = req.params;  // Obtener el ID del supervisor desde la URL
+    const { id_supervisor } = req.params;  
 
     try {
         // Obtener los grupos que tienen al supervisor especificado
@@ -296,19 +295,19 @@ router.get('/supervisor/:id_supervisor/tecnicos', verifyToken, async (req, res) 
         const { data: tecnicos, error: errorTecnicos } = await supabase
             .from('grupo_tecnico')
             .select('id_tecnico')
-            .in('id_grupo', grupos.map(grupo => grupo.id));  // Filtrar por los IDs de los grupos del supervisor
+            .in('id_grupo', grupos.map(grupo => grupo.id));  
 
         if (errorTecnicos || !tecnicos || tecnicos.length === 0) {
             return res.status(404).json({ error: 'No se encontraron técnicos asignados a estos grupos.' });
         }
 
         // Obtener la información de los técnicos
-        const idsTecnicos = tecnicos.map(tecnico => tecnico.id_tecnico);  // Extraer solo los IDs de los técnicos
+        const idsTecnicos = tecnicos.map(tecnico => tecnico.id_tecnico);  
         const { data: usuarios, error: errorUsuarios } = await supabase
             .from('usuario')
             .select('id, nombre')
-            .in('id', idsTecnicos)  // Filtrar por los IDs de los técnicos
-            .eq('rol', 'Técnico');  // Solo técnicos
+            .in('id', idsTecnicos)  
+            .eq('rol', 'Técnico');  
 
         if (errorUsuarios || !usuarios || usuarios.length === 0) {
             return res.status(404).json({ error: 'No se encontraron técnicos con los ID proporcionados.' });
@@ -327,35 +326,35 @@ router.get('/supervisor/:id_supervisor/tecnicos', verifyToken, async (req, res) 
 //////////////////////////////////////////
 // Obtener los técnicos de un grupo específico
 router.get('/:id/tecnicos', async (req, res) => {
-    const { id } = req.params; // ID del grupo
+    const { id } = req.params; 
 
     try {
-        // Primero obtenemos los ID de los técnicos en el grupo
+       
         const { data: tecnicosGrupo, error: errorGrupo } = await supabase
             .from('grupo_tecnico')
             .select('id_tecnico')
             .eq('id_grupo', id);
 
-        if (errorGrupo) throw errorGrupo; // Captura errores de Supabase
+        if (errorGrupo) throw errorGrupo; 
 
         if (!tecnicosGrupo.length) {
             return res.status(404).json({ message: 'No hay técnicos asignados a este grupo' });
         }
 
-        // Extraemos solo los IDs de los técnicos
+    
         const idsTecnicos = tecnicosGrupo.map(t => t.id_tecnico);
 
-        // Luego obtenemos los datos de los técnicos usando esos IDs
+        
         const { data: tecnicos, error: errorUsuarios } = await supabase
             .from('usuario')
             .select('id, nombre, correo')
-            .in('id', idsTecnicos); // Filtramos por los IDs obtenidos
+            .in('id', idsTecnicos); 
 
         if (errorUsuarios) throw errorUsuarios;
 
         res.json(tecnicos);
     } catch (error) {
-        console.error('❌ Error en GET /grupos/:id/tecnicos:', error);
+        console.error('Error en GET /grupos/:id/tecnicos:', error);
         res.status(500).json({ error: 'Error interno del servidor', details: error.message });
     }
 });
@@ -371,7 +370,8 @@ router.delete('/:grupoId/quitar-tecnico/:tecnicoId',async (req, res) => {
     }
 
     try {
-        // Usamos supabase.from('grupo_tecnico').delete() en lugar de supabase.query
+        ///////No usar
+        //supabase.from('grupo_tecnico').delete() en lugar de supabase.query
         const { error } = await supabase
             .from('grupo_tecnico')
             .delete()

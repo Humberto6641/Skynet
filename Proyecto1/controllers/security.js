@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const supabase = require('../configurations/db_conf');  // Asegúrate de que se importe correctamente
+const supabase = require('../configurations/db_conf');  
 
 const login = async (req, res) => {
     const { correo, password } = req.body;
@@ -10,7 +10,7 @@ const login = async (req, res) => {
     }
 
     try {
-        console.log(`Intentando login con: ${correo}`);  // Verificar qué correo se está enviando
+        console.log(`Intentando login con: ${correo}`);  
 
         // Buscar usuario en la base de datos
         const { data, error } = await supabase
@@ -40,7 +40,7 @@ const login = async (req, res) => {
 
         console.log('Autenticación exitosa');
 
-        // Generar el token
+        ////// Generar el token//////////////
         const token = jwt.sign({ userId: data.id, rol: data.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return res.json({ token });

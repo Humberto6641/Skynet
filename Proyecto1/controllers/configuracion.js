@@ -1,16 +1,15 @@
 const db = require('../configurations/db_conf');
 const { verifyAdmin } = require('../security/verifier');
 
-// Obtener configuración general (Opcional)
 const getConfiguracion = async (req, res) => {
     try {
-        // Aquí puedes agregar configuraciones generales si las necesitas
+        
         res.json({ message: 'Configuración del sistema' });
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener la configuración' });
     }
 };
-
+//// Solo ADMIN
 // Cambiar rol de usuario
 const cambiarRolUsuario = async (req, res) => {
     const { id, nuevoRol } = req.body;
@@ -20,13 +19,13 @@ const cambiarRolUsuario = async (req, res) => {
     }
 
     try {
-        // Verificar que el usuario existe
+        //// Verificar que el usuario existe
         const [usuario] = await db.query('SELECT * FROM usuario WHERE id = ?', [id]);
         if (usuario.length === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        // Actualizar el rol del usuario
+        //// Actualizar el rol del usuario
         await db.query('UPDATE usuario SET rol = ? WHERE id = ?', [nuevoRol, id]);
 
         res.json({ message: 'Rol actualizado correctamente' });

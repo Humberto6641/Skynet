@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-const passwordIngresada = 'Técnico';  // Escribe la contraseña que usaste
+const passwordIngresada = 'Técnico';  
 const passwordEncriptada = '$2b$10$xU3ixvRG9dWBhRZ4Gyt/TexU5XFJgqK2w9H.6jlX7q3uEret7sqB';  // Reemplaza con el valor de la BD
 
 bcrypt.compare(passwordIngresada, passwordEncriptada)

@@ -1,7 +1,7 @@
 // updatePasswords.js
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const supabase = require('./configurations/db_conf'); // Asegúrate de que la ruta sea correcta
+const supabase = require('./configurations/db_conf'); 
 
 const updatePasswords = async () => {
     const { data, error } = await supabase
@@ -14,9 +14,9 @@ const updatePasswords = async () => {
     }
 
     for (const user of data) {
-        const hashedPassword = await bcrypt.hash(user.password, 10);  // Cifra la contraseña
+        const hashedPassword = await bcrypt.hash(user.password, 10); 
         
-        // Actualiza la contraseña cifrada en la base de datos
+        // actualiza la contraseña 
         const { error: updateError } = await supabase
             .from('usuario')
             .update({ password: hashedPassword })

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const supabase = require('../configurations/db_conf');
-const { verifyToken } = require('../security/verifier'); // Importa la función correcta
+const { verifyToken } = require('../security/verifier'); 
 
-// Middleware para verificar permisos de Administrador y Supervisor
+// permisos de Administrador y Supervisor
 const checkAdminOrSupervisor = (req, res, next) => {
     const rolesPermitidos = ['Administrador', 'Supervisor'];
     if (!rolesPermitidos.includes(req.user.rol)) {
@@ -12,9 +12,9 @@ const checkAdminOrSupervisor = (req, res, next) => {
     next();
 };
 
-// Obtener todos los clientes con filtros opcionales
+// Obener todos los clientes
 router.get('/', verifyToken, checkAdminOrSupervisor, async (req, res) => {
-    const { nombre, correo, fecha_registro } = req.query; // Filtros opcionales
+    const { nombre, correo, fecha_registro } = req.query; 
     let query = supabase.from('cliente').select('*');
 
     if (nombre) query = query.ilike('nombre', `%${nombre}%`);
@@ -46,9 +46,8 @@ router.get('/:id', verifyToken, checkAdminOrSupervisor, async (req, res) => {
 });
 
 // Crear un nuevo cliente
-// 🔹 Ruta para agregar un cliente
 router.post('/', verifyToken, checkAdminOrSupervisor, async (req, res) => {
-    console.log("Datos recibidos en el servidor:", req.body); // Ver qué llega realmente
+    console.log("Datos recibidos en el servidor:", req.body); 
 
     const { nombre, correo, telefono, direccion, ubicacion } = req.body;
 
@@ -84,7 +83,7 @@ router.post('/', verifyToken, checkAdminOrSupervisor, async (req, res) => {
 
 
 
-// Actualizar un cliente
+//*/ Actualizar un cliente
 router.put('/:id', verifyToken, checkAdminOrSupervisor, async (req, res) => {
     const { nombre, direccion, ubicacion, telefono, correo } = req.body;
     const updatedFields = {};
@@ -117,7 +116,7 @@ router.delete('/:id', verifyToken, checkAdminOrSupervisor, async (req, res) => {
         if (error) {
             return res.status(500).json({ error: 'Error al eliminar cliente: ' + error.message });
         }
-        res.json({ message: 'Cliente eliminado exitosamente' });
+        res.json({ message: 'Cliente eliminando exitosamente' });
     } catch (error) {
         res.status(500).json({ error: 'Error al eliminar cliente', details: error.message });
     }

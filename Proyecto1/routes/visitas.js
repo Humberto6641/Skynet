@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const supabase = require('../configurations/db_conf');
-const { verifyToken, verifyAdmin } = require('../security/verifier'); // Importar correctamente
+const { verifyToken, verifyAdmin } = require('../security/verifier'); 
 
-// Obtener todas las visitas (solo administradores y supervisores)
+// Obtener todas las visitas 
 router.get('/', verifyToken, async (req, res) => {
     if (req.user.rol !== 'Administrador' && req.user.rol !== 'Supervisor') {
         return res.status(403).json({ error: 'Acceso denegado' });
@@ -33,7 +33,7 @@ router.get('/:id', verifyToken, async (req, res) => {
 router.get('/tecnico/:id_tecnico', verifyToken, async (req, res) => {
     const id_tecnico = req.params.id_tecnico;
 
-    // Solo el propio técnico o un administrador/supervisor pueden ver las visitas
+    
     if (req.user.rol === 'Técnico' && req.user.userId != id_tecnico) {
         return res.status(403).json({ error: 'Acceso denegado' });
     }
@@ -47,7 +47,7 @@ router.get('/tecnico/:id_tecnico', verifyToken, async (req, res) => {
     }
 });
 
-// Crear una visita (solo administradores y supervisores)
+// Crear una visita
 router.post('/', verifyToken, async (req, res) => {
     if (req.user.rol !== 'Administrador' && req.user.rol !== 'Supervisor') {
         return res.status(403).json({ error: 'Acceso denegado' });
@@ -67,7 +67,7 @@ router.post('/', verifyToken, async (req, res) => {
     }
 });
 
-// Actualizar una visita (solo administradores y supervisores)
+// Actualizar una visita 
 router.put('/:id', verifyToken, async (req, res) => {
     if (req.user.rol !== 'Administrador' && req.user.rol !== 'Supervisor') {
         return res.status(403).json({ error: 'Acceso denegado' });

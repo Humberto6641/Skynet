@@ -31,7 +31,7 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
     const { nombre, correo, telefono, password } = req.body;
-    const rol = 'Técnico'; // Default role
+    const rol = 'Técnico'; // Rol por Default 
 
     if (!nombre || !correo || !telefono || !password) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
@@ -60,9 +60,9 @@ const updateUser = async (req, res) => {
     const updatedFields = {};
 
     if (password) {
-        console.log("📌 Contraseña recibida en el backend:", password);
+        console.log("Contraseña recibida en el backend:", password);
         updatedFields.password = await bcrypt.hash(password, 10);
-        console.log("🔒 Contraseña encriptada antes de guardar:", updatedFields.password);
+        console.log("Contraseña encriptada antes de guardar:", updatedFields.password);
     }
 
     if (nombre) updatedFields.nombre = nombre;
